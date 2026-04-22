@@ -29,3 +29,8 @@ mod tests {
         assert_eq!(calculate_price_of_apples(65), 65);
     }
 }
+
+fn calculate_price_of_apples(number: u32) -> u32{
+    if number <= 40{ return number * 2}
+    number
+}

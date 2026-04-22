@@ -1,13 +1,44 @@
-fn trim_me(input: &str) -> &str {
-    // TODO: Remove whitespace from both ends of a string.
-}
+fn trim_me(input: &str) -> String {
+    let bytes = input.as_bytes();
+
+    if bytes.is_empty() {
+        return String::from("");
+    }
+
+    let mut start = 0;
+    let mut end = bytes.len() - 1;
+
+    while start <= end && bytes[start] == b' ' {
+        start += 1;
+    }
+
+    while end > start && bytes[end] == b' ' {
+        end -= 1;
+    }
+
+    input[start..=end].to_string()
+} 
 
 fn compose_me(input: &str) -> String {
     // TODO: Add " world!" to the string! There are multiple ways to do this.
+    input.to_owned() + " world!"
 }
 
 fn replace_me(input: &str) -> String {
-    // TODO: Replace "cars" in the string with "balloons".
+    let n = input.len();
+    if n < 4 {
+        return String::from("");
+    }
+    let bytes = input.as_bytes();
+
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b'c' {
+            if i + 3 < n && &input[i..i + 4] == "cars" {
+                return format!("{}{}{}", &input[..i], "balloons", &input[i + 4..]);
+            }
+        }
+    }
+    "".to_string()
 }
 
 fn main() {
