@@ -5,7 +5,10 @@
 // https://doc.rust-lang.org/std/convert/trait.TryFrom.html
 
 #![allow(clippy::useless_vec)]
-use std::convert::{TryFrom, TryInto};
+use std::{
+    convert::{TryFrom, TryInto},
+    fmt::Error,
+};
 
 #[derive(Debug, PartialEq)]
 struct Color {
@@ -28,14 +31,30 @@ enum IntoColorError {
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = IntoColorError;
 
-    fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {}
+    fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        let (r, g, b) = tuple;
+
+        Ok(Color {
+            red: u8::try_from(r).map_err(|_| IntoColorError::IntConversion)?,
+            green: u8::try_from(g).map_err(|_| IntoColorError::IntConversion)?,
+            blue: u8::try_from(b).map_err(|_| IntoColorError::IntConversion)?,
+        })
+    }
 }
 
 // TODO: Array implementation.
 impl TryFrom<[i16; 3]> for Color {
     type Error = IntoColorError;
 
-    fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {}
+    fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        let [r, g, b] = arr;
+
+        Ok(Color {
+            red: u8::try_from(r).map_err(|_| IntoColorError::IntConversion)?,
+            green: u8::try_from(g).map_err(|_| IntoColorError::IntConversion)?,
+            blue: u8::try_from(b).map_err(|_| IntoColorError::IntConversion)?,
+        })
+    }
 }
 
 // TODO: Slice implementation.
@@ -43,7 +62,17 @@ impl TryFrom<[i16; 3]> for Color {
 impl TryFrom<&[i16]> for Color {
     type Error = IntoColorError;
 
-    fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {}
+    fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        if let &[r, g, b] = slice {
+            Ok(Color {
+                red: u8::try_from(r).map_err(|_| IntoColorError::IntConversion)?,
+                green: u8::try_from(g).map_err(|_| IntoColorError::IntConversion)?,
+                blue: u8::try_from(b).map_err(|_| IntoColorError::IntConversion)?,
+            })
+        } else {
+            Err(IntoColorError::BadLen)
+        }
+    }
 }
 
 fn main() {
